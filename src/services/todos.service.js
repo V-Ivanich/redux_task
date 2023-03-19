@@ -12,5 +12,13 @@ const todosService = {
     })
     return data
   },
+  fetchTasks: async (title, completed) => {
+    const { data } = await httpService.post(todosEndepoint, {
+      userId: 1,
+      title,
+      completed,
+    })
+    return data
+  },
 }
 export default todosService
