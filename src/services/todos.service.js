@@ -12,12 +12,8 @@ const todosService = {
     })
     return data
   },
-  fetchTasks: async (title, completed) => {
-    const { data } = await httpService.post(todosEndepoint, {
-      userId: 1,
-      title,
-      completed,
-    })
+  create: async (payload) => {
+    const { data } = await httpService.post(todosEndepoint, payload)
     return data
   },
 }

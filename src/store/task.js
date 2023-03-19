@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createAction, createSlice } from '@reduxjs/toolkit'
 import todosService from '../services/todos.service'
 import { setError } from './errors'
 
@@ -26,24 +26,32 @@ const taskSlice = createSlice({
         (el) => el.id !== action.payload.id,
       )
     },
-    taskRequested(state) {
+    loadTasksRequested(state) {
       state.isLoading = true
     },
     taskRequestFailed(state) {
       state.isLoading = false
     },
-    addTask(state, action) {
-      state.entities = [action.payload, ...state.entities]
+    taskAdded(state, action) {
+      state.entities.push(action.payload)
       state.isLoading = false
     },
   },
 })
 const { actions, reducer: taskReducer } = taskSlice
-const { update, remove, recived, addTask, taskRequested, taskRequestFailed } =
-  actions
+const {
+  update,
+  remove,
+  recived,
+  taskAdded,
+  taskRequestFailed,
+  loadTasksRequested,
+} = actions
+
+const taskRequested = createAction('task/tasksRequested')
 
 export const loadTasks = () => async (dispatch) => {
-  dispatch(taskRequested())
+  dispatch(loadTasksRequested())
   try {
     const data = await todosService.fetch()
     dispatch(recived(data))
@@ -65,11 +73,11 @@ export function taskDeleted(id) {
   return remove({ id })
 }
 
-export const taskCreated = (title, completed) => async (dispatch) => {
+export const createTask = (task) => async (dispatch) => {
   dispatch(taskRequested())
   try {
-    const data = await todosService.fetchTasks(title, completed)
-    dispatch(addTask(data))
+    const data = await todosService.create(task)
+    dispatch(taskAdded(data))
   } catch (error) {
     dispatch(taskRequestFailed(error.message))
     dispatch(setError(error.message))

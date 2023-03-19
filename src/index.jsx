@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import {
   titleChanged,
@@ -7,7 +7,7 @@ import {
   loadTasks,
   getTasks,
   getTasksLoadingStatus,
-  taskCreated,
+  createTask,
 } from './store/task'
 import configureStore from './store/store'
 import { Provider, useSelector, useDispatch } from 'react-redux'
@@ -20,11 +20,14 @@ const App = (params) => {
   const isLoading = useSelector(getTasksLoadingStatus())
   const error = useSelector(getError())
   const dispatch = useDispatch()
-  const [text, setText] = useState('')
 
   useEffect(() => {
     dispatch(loadTasks())
   }, [dispatch])
+
+  const addNewTask = () => {
+    dispatch(createTask({ userId: 1, title: 'New task add', completed: false }))
+  }
 
   const changeTitle = (taskId) => {
     dispatch(titleChanged(taskId))
@@ -32,11 +35,6 @@ const App = (params) => {
 
   const deleteTask = (taskId) => {
     dispatch(taskDeleted(taskId))
-  }
-
-  const createTask = (title) => {
-    dispatch(taskCreated(title, false))
-    setText('')
   }
 
   if (isLoading) {
@@ -49,8 +47,7 @@ const App = (params) => {
   return (
     <>
       <h1>App</h1>
-      <input value={text} onChange={(e) => setText(e.target.value)} />
-      <button onClick={() => dispatch(createTask(text))}>Add new Tasks</button>
+      <button onClick={addNewTask}>Add new Tasks</button>
       <ul>
         {state.map((el) => (
           <li key={el.id}>
