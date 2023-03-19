@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import {
   titleChanged,
@@ -20,10 +20,11 @@ const App = (params) => {
   const isLoading = useSelector(getTasksLoadingStatus())
   const error = useSelector(getError())
   const dispatch = useDispatch()
+  const [text, setText] = useState('')
 
   useEffect(() => {
     dispatch(loadTasks())
-  }, [])
+  }, [dispatch])
 
   const changeTitle = (taskId) => {
     dispatch(titleChanged(taskId))
@@ -33,9 +34,9 @@ const App = (params) => {
     dispatch(taskDeleted(taskId))
   }
 
-  const createTask = () => {
-    dispatch(taskCreated())
-    console.log('work!', state)
+  const createTask = (title) => {
+    dispatch(taskCreated(title, false))
+    setText('')
   }
 
   if (isLoading) {
@@ -48,7 +49,8 @@ const App = (params) => {
   return (
     <>
       <h1>App</h1>
-      <button onClick={createTask}>Add new Tasks</button>
+      <input value={text} onChange={(e) => setText(e.target.value)} />
+      <button onClick={() => dispatch(createTask(text))}>Add new Tasks</button>
       <ul>
         {state.map((el) => (
           <li key={el.id}>

@@ -12,12 +12,11 @@ const todosService = {
     })
     return data
   },
-  fetchTask: async () => {
+  fetchTasks: async (title, completed) => {
     const { data } = await httpService.post(todosEndepoint, {
-      params: {
-        title,
-        completed,
-      },
+      userId: 1,
+      title,
+      completed,
     })
     return data
   },
